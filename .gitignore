@@ -1,0 +1,9 @@
+.idea
+
+auth.json
+
+public_html/.htaccess
+.htpasswd
+
+/public_html/matches.json
+/public_html/players.json
