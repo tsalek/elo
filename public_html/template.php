@@ -30,9 +30,9 @@ function nazwaRangi(string $ranga): string
     };
 }
 
-function isDarkMode()
+function isLightMode()
 {
-    return isset($_COOKIE['theme']) && $_COOKIE['theme'] === 'dark';
+    return isset($_COOKIE['theme']) && $_COOKIE['theme'] === 'light';
 }
 
 function playerStats($playerName, $matches)
@@ -52,13 +52,14 @@ function playerStats($playerName, $matches)
 
 ?>
 <!DOCTYPE html>
-<html lang="pl" data-bs-theme="<?= isDarkMode() ? 'dark' : 'light' ?>">
+<html lang="pl" data-bs-theme="<?= isLightMode() ? 'light' : 'dark' ?>">
 <head>
     <meta charset="UTF-8">
     <title>Ranking Bilardowy (Elo)</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://elo.tsalek.pl/assets/style.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="icon" type="image/png" href="assets/images/favicon.png">
 </head>
 <body class="bg-body text-body">
 <div class="container py-5">
