@@ -57,12 +57,12 @@ function playerStats($playerName, $matches)
     <meta charset="UTF-8">
     <title>Ranking Bilardowy (Elo)</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://elo.tsalek.pl/assets/style.css" rel="stylesheet">
+    <link href="/assets/style.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="icon" type="image/png" href="assets/images/favicon.png">
 </head>
 <body class="bg-body text-body">
-<div class="container py-5">
+<div class="container elo-container py-5">
     <h1 class="mb-4">Ranking Bilardowy (Elo)</h1>
 
     <form method="post" class="mb-4">
@@ -164,17 +164,18 @@ function playerStats($playerName, $matches)
     </table>
 
 
-    <h4>Historia meczów</h4>
+    <h4>Historia ostatnich 20 meczów</h4>
     <ul class="list-group">
-        <?php foreach (array_reverse($matches) as $m): ?>
+        <?php foreach (array_reverse(array_slice($matches, -20)) as $m): ?>
             <li class="list-group-item"><?= $m->date ?> - <strong><?= $m->winner ?></strong> pokonał <?= $m->loser ?>
                 (<?= $m->winner_rating ?> : <?= $m->loser_rating ?>)
             </li>
         <?php endforeach; ?>
     </ul>
-
-    <h4 class="mt-5">📈 Historia rankingów graczy</h4>
-    <div id="charts"></div>
+</div>
+<div class="container pb-5">
+    <h4>📈 Historia rankingów graczy</h4>
+    <div id="charts" class="d-flex flex-wrap" style="width: 100%;"></div>
 </div>
 
 <script>
@@ -204,7 +205,7 @@ function playerStats($playerName, $matches)
             if (entries.length === 0) return;
             const canvas = document.createElement("canvas");
             const card = document.createElement("div");
-            card.className = "card my-3 p-3";
+            card.className = "card my-3 p-3 col-12 col-lg-4";
             card.innerHTML = `<h5>${player}</h5>`;
             card.appendChild(canvas);
             container.appendChild(card);
