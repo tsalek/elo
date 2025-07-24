@@ -175,7 +175,8 @@ function playerStats($playerName, $matches)
 </div>
 <div class="container pb-5">
     <h4>📈 Historia rankingów graczy</h4>
-    <div id="charts" class="d-flex flex-wrap" style="width: 100%;"></div>
+    <div id="playerSelector" class="mb-3"></div>
+    <canvas id="eloChart"></canvas>
 </div>
 
 <script>
@@ -200,40 +201,93 @@ function playerStats($playerName, $matches)
         ?>;
 
     document.addEventListener("DOMContentLoaded", () => {
-        const container = document.getElementById("charts");
-        Object.entries(history).forEach(([player, entries]) => {
-            if (entries.length === 0) return;
-            const canvas = document.createElement("canvas");
-            const card = document.createElement("div");
-            card.className = "card my-3 p-3 col-12 col-lg-4";
-            card.innerHTML = `<h5>${player}</h5>`;
-            card.appendChild(canvas);
-            container.appendChild(card);
+        const canvas = document.getElementById("eloChart");
+        const selector = document.getElementById("playerSelector");
 
-            const labels = entries.map(e => e.date);
-            const data = entries.map(e => e.rating);
+        const allDates = new Set();
+        Object.values(history).forEach(entries => {
+            entries.forEach(e => allDates.add(e.date));
+        });
+        const sortedDates = Array.from(allDates).sort();
 
-            new Chart(canvas, {
-                type   : 'line',
-                data   : {
-                    labels  : labels,
-                    datasets: [{
-                        label          : 'Ranking Elo',
-                        data           : data,
-                        fill           : false,
-                        borderColor    : 'rgb(75, 192, 192)',
-                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                        tension        : 0.2
-                    }]
-                },
-                options: {
-                    scales: {
-                        y: {beginAtZero: false}
+        const chart = new Chart(canvas, {
+            type: 'line',
+            data: {
+                labels: sortedDates,
+                datasets: []
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'top' },
+                    title: {
+                        display: true,
+                        text: 'Porównanie rankingów Elo'
                     }
+                },
+                scales: {
+                    y: { beginAtZero: false }
                 }
+            }
+        });
+
+
+        Object.keys(history).forEach(player => {
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.id = `cb-${player}`;
+            checkbox.dataset.player = player;
+
+            const label = document.createElement('label');
+            label.htmlFor = checkbox.id;
+            label.textContent = ` ${player}`;
+
+            const wrapper = document.createElement('div');
+            wrapper.className = 'form-check form-check-inline';
+            wrapper.appendChild(checkbox);
+            wrapper.appendChild(label);
+            selector.appendChild(wrapper);
+
+
+            checkbox.addEventListener('change', () => {
+                if (checkbox.checked) {
+                    const entries = history[player];
+                    const ratingMap = Object.fromEntries(entries.map(e => [e.date, e.rating]));
+
+                    let lastKnown = null;
+                    const data = sortedDates.map(date => {
+                        if (ratingMap[date] !== undefined) {
+                            lastKnown = ratingMap[date];
+                        }
+                        return lastKnown;
+                    });
+
+                    const color = randomColor();
+
+                    chart.data.datasets.push({
+                        label: player,
+                        data: data,
+                        borderColor: color,
+                        backgroundColor: color,
+                        fill: false,
+                        tension: 0.2
+                    });
+                } else {
+                    chart.data.datasets = chart.data.datasets.filter(ds => ds.label !== player);
+                }
+                chart.update();
             });
         });
     });
+
+    function randomColor() {
+        const r = Math.floor(Math.random() * 180);
+        const g = Math.floor(Math.random() * 180);
+        const b = Math.floor(Math.random() * 180);
+        return `rgb(${r}, ${g}, ${b})`;
+    }
+
+
 </script>
 </body>
 </html>
