@@ -173,7 +173,7 @@ function playerStats($playerName, $matches)
         <?php endforeach; ?>
     </ul>
 </div>
-<div class="container pb-5">
+<div class="container-fluid pb-5">
     <h4>📈 Historia rankingów graczy</h4>
     <div id="playerSelector" class="mb-3"></div>
     <canvas id="eloChart"></canvas>
@@ -211,22 +211,22 @@ function playerStats($playerName, $matches)
         const sortedDates = Array.from(allDates).sort();
 
         const chart = new Chart(canvas, {
-            type: 'line',
-            data: {
-                labels: sortedDates,
+            type   : 'line',
+            data   : {
+                labels  : sortedDates,
                 datasets: []
             },
             options: {
                 responsive: true,
-                plugins: {
-                    legend: { position: 'top' },
-                    title: {
+                plugins   : {
+                    legend: {position: 'top'},
+                    title : {
                         display: true,
-                        text: 'Porównanie rankingów Elo'
+                        text   : 'Porównanie rankingów Elo'
                     }
                 },
-                scales: {
-                    y: { beginAtZero: false }
+                scales    : {
+                    y: {beginAtZero: false}
                 }
             }
         });
@@ -248,7 +248,7 @@ function playerStats($playerName, $matches)
             wrapper.appendChild(label);
             selector.appendChild(wrapper);
 
-
+            const color = randomColor();
             checkbox.addEventListener('change', () => {
                 if (checkbox.checked) {
                     const entries = history[player];
@@ -262,15 +262,14 @@ function playerStats($playerName, $matches)
                         return lastKnown;
                     });
 
-                    const color = randomColor();
 
                     chart.data.datasets.push({
-                        label: player,
-                        data: data,
-                        borderColor: color,
+                        label          : player,
+                        data           : data,
+                        borderColor    : color,
                         backgroundColor: color,
-                        fill: false,
-                        tension: 0.2
+                        fill           : false,
+                        tension        : 0.2
                     });
                 } else {
                     chart.data.datasets = chart.data.datasets.filter(ds => ds.label !== player);
